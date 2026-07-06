@@ -1,0 +1,6 @@
+entity\User.class
+com\mycompany\NewSessionBean.class
+entity\Ok_.class
+entity\User_.class
+dao\UserDao.class
+entity\Ok.class
