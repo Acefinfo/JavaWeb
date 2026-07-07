@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Admin Dashboard</title>
+        <style>
+            .top-bar { display:flex; justify-content:space-between; align-items:center; padding:15px 30px; background:#2c3e50; color:#fff; }
+            .content { max-width: 800px; margin: 40px auto; padding: 0 20px; font-family: Arial, sans-serif; }
+        </style>
+    </h:head>
+
+    <h:body>
+        <div class="top-bar">
+            <h2>Admin Dashboard</h2>
+            <h:form>
+                <p:commandButton value="Logout" action="#{userBean.logout}" ajax="false"
+                                  icon="pi pi-sign-out" styleClass="ui-button-danger"/>
+            </h:form>
+        </div>
+        <div class="content">
+            <p>Welcome, <strong>#{sessionScope.currentUser.username}</strong>.</p>
+            <p>Admin features are coming soon.</p>
+        </div>
+    </h:body>
+</html>

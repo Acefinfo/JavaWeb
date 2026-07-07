@@ -10,7 +10,6 @@ import javax.ejb.EJB;
 import javax.enterprise.context.SessionScoped;
 import entity.User;
 import dao.UserDao;
-import java.security.MessageDigest;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
@@ -28,6 +27,7 @@ public class UserBean implements Serializable  {
     private User user = new User();
     private String loginUsername;
     private String loginPassword;
+    private String loginRole;
     
     @EJB
     private UserDao userDAO;
@@ -89,6 +89,7 @@ public class UserBean implements Serializable  {
                 if(hex.length() == 1){
                     hexString.append("0");
                 }
+                hexString.append(hex);
             }
         }
             
@@ -100,6 +101,13 @@ public class UserBean implements Serializable  {
     public String register(){
         
         try{
+            
+            String currentRole = user.getRole();
+            if (currentRole == null || currentRole.trim().isEmpty()){
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Validation Error", "Please select an account type."));
+                return null;
+            }
+            
             String currentEmail  = user.getEmail();
             if (currentEmail == null || !currentEmail.toLowerCase().endsWith("@gmail.com")){
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Validation Error", "Email registry restricted to valid @gmail.com accounts."));
@@ -136,24 +144,44 @@ public class UserBean implements Serializable  {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "System Interruption", "Registration failure exception thrown during save."));
         return null;
         }
-        
     }
     
     public String login(){
+    
+        if (loginRole == null || loginRole.trim().isEmpty()){
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Validation Error", "Please select the account type you want to log in as."));
+            return null;
+        }
+
         User userExist = userDAO.findByUsername(loginUsername);
-        
         if(userExist != null){
             String loginPagePassword = hashPassword(loginPassword);
-            
+
             if (userExist.getPassword().equals(loginPagePassword)){
+
+                if (userExist.getRole() == null || !userExist.getRole().equalsIgnoreCase(loginRole)){
+                    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Authentication Error", "This account is not registered as a " + loginRole + "."));
+                    return null;
+                }
+
                 FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("currentUser", userExist);
-                return "dashboard.xhtml?faces-redirect=true";
+
+                switch (userExist.getRole().toLowerCase()){
+                    case "seller":
+                        return "seller-dashboard.xhtml?faces-redirect=true";
+                    case "admin":
+                        return "admin-dashboard.xhtml?faces-redirect=true";
+                    case "customer":
+                        return "customer-dashboard.xhtml?faces-redirect=true";
+                    default:
+                        return "dashboard.xhtml?faces-redirect=true";
+                }
             }
         }    
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Authentication Error", "Invalid Username or Password."));
         return null;
-        
-    }
+
+     }
     
     
      public String logout() {
@@ -181,6 +209,14 @@ public class UserBean implements Serializable  {
    
    public void setLoginPassword(String loginPassword) { 
        this.loginPassword = loginPassword;
+   }
+   
+   public String getLoginRole() {
+        return loginRole;
+   }
+   
+   public void setLoginRole(String loginRole) {
+        this.loginRole = loginRole;
    }
     
     
