@@ -23,6 +23,9 @@ and open the template in the editor.
             .search-row { display: flex; gap: 10px; align-items: center; }
             .search-row .ui-inputfield { border-radius: 20px !important; width: 320px; }
             .login-btn .ui-button { background: #2563eb !important; border-radius: 20px !important; border:none !important; }
+            .nav-actions { display:flex; gap:10px; align-items:center; }
+            .logout-btn .ui-button { border-radius: 20px !important; }
+            .welcome-chip { color:#fff; font-size:14px; opacity:0.9; margin-right:4px; }
             .content { max-width: 1200px; margin: 25px auto; padding: 0 20px; }
             .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
             .product-card {
@@ -50,8 +53,16 @@ and open the template in the editor.
                 <p:commandButton value="Search" icon="pi pi-search" actionListener="#{productBean.search}" update=":productGridForm"/>
             </h:form>
 
-            <h:form id="loginLinkForm" class="login-btn">
+            <h:form id="loginLinkForm" class="login-btn" rendered="#{empty sessionScope.currentUser}">
                 <p:button value="Login" icon="pi pi-sign-in" outcome="login"/>
+            </h:form>
+
+            <h:form id="loggedInNavForm" class="nav-actions" rendered="#{not empty sessionScope.currentUser}">
+                <h:outputText value="Hi, #{sessionScope.currentUser.username}" styleClass="welcome-chip"/>
+                <p:button value="Dashboard" icon="pi pi-th-large"
+                          outcome="#{sessionScope.currentUser.role == 'Seller' ? 'seller-dashboard' : sessionScope.currentUser.role == 'Admin' ? 'admin-dashboard' : 'customer-dashboard'}"/>
+                <p:commandButton value="Logout" icon="pi pi-sign-out" ajax="false"
+                                  action="#{userBean.logout}" styleClass="ui-button-danger logout-btn"/>
             </h:form>
         </div>
 

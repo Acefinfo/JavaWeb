@@ -48,9 +48,7 @@ public class CartBean implements Serializable {
     }
     
     public List<CartItem> getCartItems() {
-        if (cartItems == null) {
-            loadCart();
-        }
+        loadCart();
         return cartItems;
     }
     

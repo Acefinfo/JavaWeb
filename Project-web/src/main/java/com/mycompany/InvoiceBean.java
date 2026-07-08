@@ -48,21 +48,17 @@ public class InvoiceBean implements Serializable {
     }
 
     public List<Invoice> getCustomerInvoices() {
-        if (customerInvoices == null) {
-            User current = getCurrentUser();
-            if (current != null) {
-                customerInvoices = invoiceDao.findByBuyerId(current.getId());
-            }
+        User current = getCurrentUser();
+        if (current != null) {
+            customerInvoices = invoiceDao.findByBuyerId(current.getId());
         }
         return customerInvoices;
     }
 
     public List<Invoice> getSellerInvoices() {
-        if (sellerInvoices == null) {
-            User current = getCurrentUser();
-            if (current != null) {
-                sellerInvoices = invoiceDao.findBySellerId(current.getId());
-            }
+        User current = getCurrentUser();
+        if (current != null) {
+            sellerInvoices = invoiceDao.findBySellerId(current.getId());
         }
         return sellerInvoices;
     }
