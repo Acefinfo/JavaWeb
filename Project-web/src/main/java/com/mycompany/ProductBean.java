@@ -35,6 +35,48 @@ public class ProductBean implements Serializable {
     private UploadedFile uploadedFile;
     private boolean editMode = false;
 
+
+    private List<Product> allProducts;
+    private String searchKeyword;
+
+
+    private Long viewProductId;
+    private Product selectedProduct;
+    private int buyQuantity = 1;
+
+    public List<Product> getAllProducts() {
+        if (allProducts == null) {
+            allProducts = productDao.findAll();
+        }
+        return allProducts;
+    }
+
+    public String getSearchKeyword() { return searchKeyword; }
+    public void setSearchKeyword(String searchKeyword) { this.searchKeyword = searchKeyword; }
+
+
+    public void search() {
+        allProducts = productDao.search(searchKeyword);
+    }
+
+    public Long getViewProductId() { 
+        return viewProductId; 
+    }
+    public void setViewProductId(Long viewProductId) { 
+        this.viewProductId = viewProductId; 
+    }
+
+    public void loadSelectedProduct() {
+        if (viewProductId != null) {
+            selectedProduct = productDao.findById(viewProductId);
+        }
+    }
+
+    public Product getSelectedProduct() { return selectedProduct; }
+
+    public int getBuyQuantity() { return buyQuantity; }
+    public void setBuyQuantity(int buyQuantity) { this.buyQuantity = buyQuantity; }
+
     private Long getCurrentSellerId() {
         Object sessionUser = FacesContext.getCurrentInstance()
                 .getExternalContext().getSessionMap().get("currentUser");
@@ -109,27 +151,27 @@ public class ProductBean implements Serializable {
         }
     }
 
-    public Product getProduct() {
-        return product;
+    public Product getProduct() { 
+        return product; 
+    }
+    
+    public void setProduct(Product product) { 
+        this.product = product; 
     }
 
-    public void setProduct(Product product) {
-        this.product = product;
+    public UploadedFile getUploadedFile() { 
+        return uploadedFile; 
     }
 
-    public UploadedFile getUploadedFile() {
-        return uploadedFile;
+    public void setUploadedFile(UploadedFile uploadedFile) { 
+        this.uploadedFile = uploadedFile; 
     }
 
-    public void setUploadedFile(UploadedFile uploadedFile) {
-        this.uploadedFile = uploadedFile;
+    public boolean isEditMode() { 
+        return editMode; 
     }
-
-    public boolean isEditMode() {
-        return editMode;
-    }
-
-    public void setEditMode(boolean editMode) {
-        this.editMode = editMode;
+    
+    public void setEditMode(boolean editMode) { 
+        this.editMode = editMode; 
     }
 }

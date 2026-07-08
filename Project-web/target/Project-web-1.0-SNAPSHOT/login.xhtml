@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
@@ -12,163 +7,57 @@ and open the template in the editor.
 
 <h:head>
     <title>Account Login</title>
-
     <style>
-    * {
-        box-sizing: border-box;
-    }
-
-    html, body {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        height: 100%;
-        font-family: "Segoe UI", Arial, sans-serif;
-        background: #ffffff;
-    }
-
-    .login {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-    }
-
-    /* Login Card */
-    .ui-panel {
-        width: 400px !important;
-        border: 1px solid #e5e5e5 !important;
-        border-radius: 10px !important;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-        overflow: hidden;
-    }
-
-    .ui-panel-titlebar {
-        background: #ffffff !important;
-        border: none !important;
-        border-bottom: 1px solid #ececec !important;
-        text-align: center;
-        font-size: 22px;
-        font-weight: 600;
-        color: #333;
-        padding: 18px;
-    }
-
-    .ui-panel-content {
-        background: white;
-        padding: 25px !important;
-    }
-
-    .ui-panelgrid td {
-        padding: 10px 6px !important;
-    }
-
-    label {
-        color: #555;
-        font-weight: 500;
-    }
-
-    .ui-inputfield {
-        width: 100%;
-        border-radius: 6px;
-    }
-
-    .ui-selectonemenu {
-        width: 100% !important;
-    }
-
-    .ui-button {
-        background: #2563eb !important;
-        border: none !important;
-        border-radius: 6px !important;
-        color: white !important;
-        padding: 8px 18px;
-        transition: .2s;
-    }
-
-    .ui-button:hover {
-        background: #1d4ed8 !important;
-    }
-
-    .register-link {
-        color: #2563eb;
-        text-decoration: none;
-        font-size: 14px;
-    }
-
-    .register-link:hover {
-        text-decoration: underline;
-    }
-
-    .button-row {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 20px;
-    }
-</style>
-
+    * { box-sizing: border-box; }
+    html, body { margin: 0; padding: 0; width: 100%; height: 100%; font-family: "Segoe UI", Arial, sans-serif; background: #ffffff; }
+    .login { display: flex; justify-content: center; align-items: center; min-height: 100vh; }
+    .ui-panel { width: 400px !important; border: 1px solid #e5e5e5 !important; border-radius: 10px !important; box-shadow: 0 8px 25px rgba(0,0,0,0.08); overflow: hidden; }
+    .ui-panel-titlebar { background: #ffffff !important; border: none !important; border-bottom: 1px solid #ececec !important; text-align: center; font-size: 22px; font-weight: 600; color: #333; padding: 18px; }
+    .ui-panel-content { background: white; padding: 25px !important; }
+    .ui-panelgrid td { padding: 10px 6px !important; }
+    label { color: #555; font-weight: 500; }
+    .ui-inputfield { width: 100%; border-radius: 6px; }
+    .ui-selectonemenu { width: 100% !important; }
+    .ui-button { background: #2563eb !important; border: none !important; border-radius: 6px !important; color: white !important; padding: 8px 18px; transition: .2s; }
+    .ui-button:hover { background: #1d4ed8 !important; }
+    .register-link { color: #2563eb; text-decoration: none; font-size: 14px; }
+    .register-link:hover { text-decoration: underline; }
+    .button-row { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; }
+    </style>
 </h:head>
 
 <h:body>
-
     <div class="login">
-
         <h:form id="loginForm">
-
             <p:growl id="messages" showDetail="true"/>
-
             <p:panel header="Sign In">
-
                 <h:panelGrid columns="2" cellpadding="8">
-
                     <p:outputLabel for="username" value="Username"/>
-                    <p:inputText id="username"
-                                 value="#{userBean.loginUsername}"
-                                 required="true"/>
+                    <p:inputText id="username" value="#{userBean.loginUsername}" required="true"/>
 
                     <p:outputLabel for="password" value="Password"/>
-                    <p:password id="password"
-                                value="#{userBean.loginPassword}"
-                                required="true"/>
+                    <p:password id="password" value="#{userBean.loginPassword}" required="true"/>
 
                     <p:outputLabel for="role" value="Login As"/>
-                    <p:selectOneMenu id="role"
-                                     value="#{userBean.loginRole}"
-                                     required="true"
+                    <p:selectOneMenu id="role" value="#{userBean.loginRole}" required="true"
                                      requiredMessage="Please select an account type.">
-
-                        <f:selectItem itemLabel="-- Select Account Type --"
-                                      itemValue=""
-                                      noSelectionOption="true"/>
-
+                        <f:selectItem itemLabel="-- Select Account Type --" itemValue="" noSelectionOption="true"/>
                         <f:selectItem itemLabel="Seller" itemValue="Seller"/>
                         <f:selectItem itemLabel="Customer" itemValue="Customer"/>
                         <f:selectItem itemLabel="Admin" itemValue="Admin"/>
-
                     </p:selectOneMenu>
-
                 </h:panelGrid>
 
                 <div class="button-row">
-
-                    <p:commandButton value="Login"
-                                     icon="pi pi-sign-in"
-                                     action="#{userBean.login}"
-                                     ajax="false"/>
-
-                    <p:link outcome="register"
-                            value="Create an account"
-                            styleClass="register-link"/>
-
+                    <p:commandButton value="Login" icon="pi pi-sign-in" action="#{userBean.login}" ajax="false"/>
+                    <p:link outcome="register" value="Create an account" styleClass="register-link"/>
                 </div>
 
+                <div style="text-align:center; margin-top:14px;">
+                    <p:link outcome="home" value="&#8592; Back to browsing" styleClass="register-link"/>
+                </div>
             </p:panel>
-
         </h:form>
-
     </div>
-
 </h:body>
-
 </html>

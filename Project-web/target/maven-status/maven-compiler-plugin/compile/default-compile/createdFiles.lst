@@ -1,4 +1,10 @@
-com\mycompany\ProductBean.class
+com\mycompany\WishlistBean.class
 com\mycompany\Contact.class
 com\mycompany\UserBean.class
+com\mycompany\AdminBean.class
+com\mycompany\ProductBean.class
+com\mycompany\CartBean.class
+com\mycompany\InboxBean.class
+com\mycompany\InvoiceBean.class
 com\mycompany\ContactBean.class
+com\mycompany\PurchaseBean.class

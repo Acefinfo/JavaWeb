@@ -57,7 +57,32 @@ public class ProductDao {
                 .setParameter("sid", sellerId)
                 .getResultList();
     }
+
+    public List<Product> findAll() {
+        return em.createQuery("SELECT p FROM Product p ORDER BY p.id DESC", Product.class)
+                .getResultList();
+    }
+
+
+    public List<Product> search(String keyword) {
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return findAll();
+        }
+        String like = "%" + keyword.trim().toLowerCase() + "%";
+        return em.createQuery(
+                "SELECT p FROM Product p WHERE LOWER(p.name) LIKE :kw OR LOWER(p.description) LIKE :kw ORDER BY p.id DESC",
+                Product.class)
+                .setParameter("kw", like)
+                .getResultList();
+    }
+
+    public boolean decrementStock(Long productId, int quantity) {
+        Product product = em.find(Product.class, productId);
+        if (product == null || product.getStock() == null || product.getStock() < quantity) {
+            return false;
+        }
+        product.setStock(product.getStock() - quantity);
+        em.merge(product);
+        return true;
+    }
 }
-    
-    
-   

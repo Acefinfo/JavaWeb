@@ -7,13 +7,22 @@ and open the template in the editor.
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
       xmlns:p="http://primefaces.org/ui">
 
     <h:head>
         <title>Admin Dashboard</title>
         <style>
+            body { font-family: Arial, Helvetica, sans-serif; margin: 0; background:#f4f6f8; }
             .top-bar { display:flex; justify-content:space-between; align-items:center; padding:15px 30px; background:#2c3e50; color:#fff; }
-            .content { max-width: 800px; margin: 40px auto; padding: 0 20px; font-family: Arial, sans-serif; }
+            .content { max-width: 1100px; margin: 25px auto; padding: 0 20px; }
+            .welcome-text { color: #555; margin-bottom: 15px; }
+            .product-thumb { width: 55px; height: 55px; object-fit: cover; border-radius: 4px; }
+            .stat-cards { display:flex; gap:16px; margin-bottom:20px; flex-wrap:wrap; }
+            .stat-card { background:#fff; border-radius:10px; padding:16px 22px; box-shadow:0 2px 8px rgba(0,0,0,0.08); min-width:180px; }
+            .stat-card .label { color:#777; font-size:13px; }
+            .stat-card .value { font-size:24px; font-weight:700; color:#2563eb; }
+            .create-admin-box { background:#fff; border-radius:10px; padding:20px; max-width:420px; box-shadow:0 2px 8px rgba(0,0,0,0.08); }
         </style>
     </h:head>
 
@@ -25,9 +34,143 @@ and open the template in the editor.
                                   icon="pi pi-sign-out" styleClass="ui-button-danger"/>
             </h:form>
         </div>
+
         <div class="content">
-            <p>Welcome, <strong>#{sessionScope.currentUser.username}</strong>.</p>
-            <p>Admin features are coming soon.</p>
+            <p class="welcome-text">Welcome, <strong>#{sessionScope.currentUser.username}</strong>.</p>
+
+            <div class="stat-cards">
+                <div class="stat-card">
+                    <div class="label">Total Products Listed</div>
+                    <div class="value">#{adminBean.productCount}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Platform Revenue</div>
+                    <div class="value">
+                        <h:outputText value="#{invoiceBean.platformTotalRevenue}">
+                            <f:convertNumber type="currency" currencySymbol="Rs "/>
+                        </h:outputText>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="label">Total Invoices</div>
+                    <div class="value">#{invoiceBean.allInvoiceCount}</div>
+                </div>
+            </div>
+
+            <p:tabView>
+
+                <p:tab title="All Products">
+                    <h:form id="productsForm">
+                        <p:growl id="productMessages" showDetail="true"/>
+
+                        <p:outputLabel for="reason" value="Removal reason (sent to the seller and any affected customers):"/>
+                        <br/>
+                        <p:inputTextarea id="reason" value="#{adminBean.removalReason}" rows="2" style="width:100%; margin:6px 0 16px;"
+                                          placeholder="e.g. Prohibited item, counterfeit, policy violation..."/>
+
+                        <p:dataTable var="product" value="#{adminBean.allProducts}" id="allProductsTable"
+                                     emptyMessage="No products listed on the platform." paginator="true" rows="8">
+
+                            <p:column headerText="Image" style="width:80px;">
+                                <h:panelGroup rendered="#{not empty product.imageBase64}">
+                                    <img src="data:image/jpeg;base64,#{product.imageBase64}" class="product-thumb" alt="#{product.name}"/>
+                                </h:panelGroup>
+                                <h:outputText value="No image" rendered="#{empty product.imageBase64}" style="color:#999; font-size:12px;"/>
+                            </p:column>
+
+                            <p:column headerText="Name">
+                                <h:outputText value="#{product.name}"/>
+                            </p:column>
+
+                            <p:column headerText="Seller">
+                                <h:outputText value="#{product.seller.username}"/>
+                            </p:column>
+
+                            <p:column headerText="Price">
+                                <h:outputText value="#{product.price}">
+                                    <f:convertNumber type="currency" currencySymbol="Rs "/>
+                                </h:outputText>
+                            </p:column>
+
+                            <p:column headerText="Stock">
+                                <h:outputText value="#{product.stock}"/>
+                            </p:column>
+
+                            <p:column headerText="Actions" style="width:150px; text-align:center;">
+                                <p:commandButton value="Remove" icon="pi pi-trash" styleClass="ui-button-danger"
+                                                  actionListener="#{adminBean.removeProduct(product)}"
+                                                  update="@form">
+                                    <p:confirm header="Confirm Removal" message="Remove this product and notify affected users?" icon="pi pi-exclamation-triangle"/>
+                                </p:commandButton>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+
+                    <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                        <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                        <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
+                    </p:confirmDialog>
+                </p:tab>
+
+                <p:tab title="All Invoices">
+                    <h:form id="allInvoicesForm">
+                        <p:dataTable var="inv" value="#{invoiceBean.allInvoices}"
+                                     emptyMessage="No purchases yet." paginator="true" rows="10">
+                            <p:column headerText="Date">
+                                <h:outputText value="#{inv.orderDate}">
+                                    <f:convertDateTime pattern="dd MMM yyyy, HH:mm"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Buyer">
+                                <h:outputText value="#{inv.buyer.username}"/>
+                            </p:column>
+                            <p:column headerText="Product">
+                                <h:outputText value="#{inv.productName}"/>
+                            </p:column>
+                            <p:column headerText="Seller">
+                                <h:outputText value="#{inv.sellerUsername}"/>
+                            </p:column>
+                            <p:column headerText="Qty">
+                                <h:outputText value="#{inv.quantity}"/>
+                            </p:column>
+                            <p:column headerText="Total">
+                                <h:outputText value="#{inv.totalPrice}">
+                                    <f:convertNumber type="currency" currencySymbol="Rs "/>
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </p:tab>
+
+                <p:tab title="Create Admin">
+                    <div class="create-admin-box">
+                        <h:form id="createAdminForm">
+                            <p:growl id="createAdminMessages" showDetail="true"/>
+
+                            <h:panelGrid columns="2" cellpadding="8">
+                                <p:outputLabel for="newUsername" value="Username:"/>
+                                <p:inputText id="newUsername" value="#{adminBean.newAdminUsername}" required="true"/>
+
+                                <p:outputLabel for="newEmail" value="Email:"/>
+                                <p:inputText id="newEmail" value="#{adminBean.newAdminEmail}" required="true"/>
+
+                                <p:outputLabel for="newPassword" value="Password:"/>
+                                <p:password id="newPassword" value="#{adminBean.newAdminPassword}" required="true"/>
+                            </h:panelGrid>
+
+                            <div style="margin-top:15px;">
+                                <p:commandButton value="Create Admin Account" icon="pi pi-user-plus"
+                                                  actionListener="#{adminBean.createAdmin}" update="@form"/>
+                            </div>
+                            <p style="color:#888; font-size:12px; margin-top:10px;">
+                                Only existing admins can create new admin accounts. Public registration does not allow
+                                selecting the Admin role.
+                            </p>
+                        </h:form>
+                    </div>
+                </p:tab>
+
+            </p:tabView>
         </div>
     </h:body>
 </html>

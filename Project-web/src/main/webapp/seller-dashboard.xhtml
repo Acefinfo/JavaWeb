@@ -1,9 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
@@ -13,88 +8,182 @@ and open the template in the editor.
     <h:head>
         <title>Seller Dashboard</title>
         <style>
-            body { font-family: Arial, Helvetica, sans-serif; margin: 0; }
+            body { font-family: Arial, Helvetica, sans-serif; margin: 0; background:#f4f6f8; }
             .top-bar {
                 display: flex; justify-content: space-between; align-items: center;
                 padding: 15px 30px; background: #2c3e50; color: #fff;
             }
             .top-bar h2 { margin: 0; font-size: 20px; }
-            .content { max-width: 1000px; margin: 25px auto; padding: 0 20px; }
+            .top-bar .nav-actions { display:flex; gap:10px; align-items:center; }
+            .content { max-width: 1100px; margin: 25px auto; padding: 0 20px; }
             .toolbar { margin-bottom: 15px; }
             .product-thumb { width: 55px; height: 55px; object-fit: cover; border-radius: 4px; }
             .welcome-text { color: #555; margin-bottom: 15px; }
+            .unread-badge { background:#dc2626; color:#fff; border-radius: 10px; padding: 1px 8px; font-size: 12px; margin-left:6px; }
+            .stat-cards { display:flex; gap:16px; margin-bottom:20px; flex-wrap:wrap; }
+            .stat-card { background:#fff; border-radius:10px; padding:16px 22px; box-shadow:0 2px 8px rgba(0,0,0,0.08); min-width:180px; }
+            .stat-card .label { color:#777; font-size:13px; }
+            .stat-card .value { font-size:24px; font-weight:700; color:#2563eb; }
+            .chart-box { background:#fff; border-radius:10px; padding:16px; box-shadow:0 2px 8px rgba(0,0,0,0.08); margin-bottom:20px; }
         </style>
     </h:head>
 
     <h:body>
         <div class="top-bar">
             <h2>Seller Dashboard</h2>
-            <h:form id="logoutForm">
-                <p:commandButton value="Logout" action="#{userBean.logout}" ajax="false"
-                                  icon="pi pi-sign-out" styleClass="ui-button-danger"/>
-            </h:form>
+            <div class="nav-actions">
+                <h:form>
+                    <p:button value="Home" icon="pi pi-home" outcome="home" style="margin-right:8px;"/>
+                    <p:commandButton value="Logout" action="#{userBean.logout}" ajax="false"
+                                      icon="pi pi-sign-out" styleClass="ui-button-danger"/>
+                </h:form>
+            </div>
         </div>
 
         <div class="content">
 
             <p class="welcome-text">Welcome back <strong>#{sessionScope.currentUser.username}</strong></p>
 
-            <h:form id="productForm">
+            <p:tabView id="dashboardTabs">
 
-                <p:growl id="messages" showDetail="true"/>
+                <p:tab title="My Products">
+                    <h:form id="productForm">
 
-                <div class="toolbar">
-                    <p:commandButton value="Add New Product" icon="pi pi-plus"
-                                      actionListener="#{productBean.openNew}"
-                                      update=":productDialogForm"
-                                      oncomplete="PF('productDialog').show()"/>
-                </div>
+                        <p:growl id="messages" showDetail="true"/>
 
-                <p:dataTable var="product" value="#{productBean.productList}" id="productTable"
-                             emptyMessage="You haven't added any product yet." paginator="true" rows="5">
+                        <div class="toolbar">
+                            <p:commandButton value="Add New Product" icon="pi pi-plus"
+                                              actionListener="#{productBean.openNew}"
+                                              update=":productDialogForm"
+                                              oncomplete="PF('productDialog').show()"/>
+                        </div>
 
-                    <p:column headerText="Image" style="width:90px;">
-                        <h:panelGroup rendered="#{not empty product.imageBase64}">
-                            <img src="data:image/jpeg;base64,#{product.imageBase64}" class="product-thumb" alt="#{product.name}"/>
-                        </h:panelGroup>
-                        <h:outputText value="No image" rendered="#{empty product.imageBase64}" style="color:#999; font-size:12px;"/>
-                    </p:column>
+                        <p:dataTable var="product" value="#{productBean.productList}" id="productTable"
+                                     emptyMessage="You haven't added any product yet." paginator="true" rows="5">
 
-                    <p:column headerText="Name">
-                        <h:outputText value="#{product.name}"/>
-                    </p:column>
+                            <p:column headerText="Image" style="width:90px;">
+                                <h:panelGroup rendered="#{not empty product.imageBase64}">
+                                    <img src="data:image/jpeg;base64,#{product.imageBase64}" class="product-thumb" alt="#{product.name}"/>
+                                </h:panelGroup>
+                                <h:outputText value="No image" rendered="#{empty product.imageBase64}" style="color:#999; font-size:12px;"/>
+                            </p:column>
 
-                    <p:column headerText="Description">
-                        <h:outputText value="#{product.description}"/>
-                    </p:column>
+                            <p:column headerText="Name">
+                                <h:outputText value="#{product.name}"/>
+                            </p:column>
 
-                    <p:column headerText="Price">
-                        <h:outputText value="#{product.price}">
-                            <f:convertNumber type="currency" currencySymbol="Rs"/>
-                        </h:outputText>
-                    </p:column>
+                            <p:column headerText="Description">
+                                <h:outputText value="#{product.description}"/>
+                            </p:column>
 
-                    <p:column headerText="Stock">
-                        <h:outputText value="#{product.stock}"/>
-                    </p:column>
+                            <p:column headerText="Price">
+                                <h:outputText value="#{product.price}">
+                                    <f:convertNumber type="currency" currencySymbol="Rs"/>
+                                </h:outputText>
+                            </p:column>
 
-                    <p:column headerText="Actions" style="width:110px; text-align:center;">
-                        <p:commandButton icon="pi pi-pencil" styleClass="ui-button-info rounded-button"
-                                          title="Edit"
-                                          actionListener="#{productBean.editProduct(product)}"
-                                          update=":productDialogForm"
-                                          oncomplete="PF('productDialog').show()"/>
+                            <p:column headerText="Stock">
+                                <h:outputText value="#{product.stock}"/>
+                            </p:column>
 
-                        <p:commandButton icon="pi pi-trash" styleClass="ui-button-danger rounded-button"
-                                          title="Delete"
-                                          actionListener="#{productBean.deleteProduct(product)}"
-                                          update=":productForm:productTable :productForm:messages">
-                            <p:confirm header="Confirm Delete" message="Delete this product?" icon="pi pi-exclamation-triangle"/>
-                        </p:commandButton>
-                    </p:column>
+                            <p:column headerText="Actions" style="width:110px; text-align:center;">
+                                <p:commandButton icon="pi pi-pencil" styleClass="ui-button-info rounded-button"
+                                                  title="Edit"
+                                                  actionListener="#{productBean.editProduct(product)}"
+                                                  update=":productDialogForm"
+                                                  oncomplete="PF('productDialog').show()"/>
 
-                </p:dataTable>
-            </h:form>
+                                <p:commandButton icon="pi pi-trash" styleClass="ui-button-danger rounded-button"
+                                                  title="Delete"
+                                                  actionListener="#{productBean.deleteProduct(product)}"
+                                                  update=":dashboardTabs:productForm:productTable :dashboardTabs:productForm:messages">
+                                    <p:confirm header="Confirm Delete" message="Delete this product?" icon="pi pi-exclamation-triangle"/>
+                                </p:commandButton>
+                            </p:column>
+
+                        </p:dataTable>
+                    </h:form>
+                </p:tab>
+
+                <p:tab title="My Sales">
+                    <h:form id="salesForm">
+                        <p:dataTable var="inv" value="#{invoiceBean.sellerInvoices}"
+                                     emptyMessage="No sales yet." paginator="true" rows="8">
+                            <p:column headerText="Date">
+                                <h:outputText value="#{inv.orderDate}">
+                                    <f:convertDateTime pattern="dd MMM yyyy, HH:mm"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Product">
+                                <h:outputText value="#{inv.productName}"/>
+                            </p:column>
+                            <p:column headerText="Unit Price">
+                                <h:outputText value="#{inv.unitPrice}">
+                                    <f:convertNumber type="currency" currencySymbol="Rs "/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Qty Sold">
+                                <h:outputText value="#{inv.quantity}"/>
+                            </p:column>
+                            <p:column headerText="Total">
+                                <h:outputText value="#{inv.totalPrice}">
+                                    <f:convertNumber type="currency" currencySymbol="Rs "/>
+                                </h:outputText>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </p:tab>
+
+                <p:tab title="Revenue">
+                    <div class="stat-cards">
+                        <div class="stat-card">
+                            <div class="label">Total Revenue</div>
+                            <div class="value">
+                                <h:outputText value="#{invoiceBean.sellerTotalRevenue}">
+                                    <f:convertNumber type="currency" currencySymbol="Rs "/>
+                                </h:outputText>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="label">Invoices</div>
+                            <div class="value">#{invoiceBean.sellerInvoiceCount}</div>
+                        </div>
+                    </div>
+
+                    <div class="chart-box">
+                        <p:chart type="bar" model="#{invoiceBean.revenueByProductModel}" style="height:300px"/>
+                    </div>
+
+                    <div class="chart-box">
+                        <p:chart type="line" model="#{invoiceBean.revenueOverTimeModel}" style="height:300px"/>
+                    </div>
+                </p:tab>
+
+                <p:tab>
+                    <f:facet name="title">
+                        Inbox
+                        <h:outputText value="#{inboxBean.unreadCount}" styleClass="unread-badge" rendered="#{inboxBean.unreadCount gt 0}"/>
+                    </f:facet>
+                    <h:form id="inboxForm">
+                        <p:commandButton value="Mark all as read" icon="pi pi-check" actionListener="#{inboxBean.markAllRead}" update="@form" style="margin-bottom:10px;"/>
+                        <p:dataTable var="msg" value="#{inboxBean.messages}" emptyMessage="No messages from the admin yet.">
+                            <p:column headerText="Date" style="width:170px;">
+                                <h:outputText value="#{msg.sentDate}">
+                                    <f:convertDateTime pattern="dd MMM yyyy, HH:mm"/>
+                                </h:outputText>
+                            </p:column>
+                            <p:column headerText="Message">
+                                <h:outputText value="#{msg.message}" style="font-weight:#{msg.read ? 'normal' : 'bold'};"/>
+                            </p:column>
+                            <p:column headerText="" style="width:120px;">
+                                <p:commandButton value="Mark read" rendered="#{not msg.read}"
+                                                  actionListener="#{inboxBean.markRead(msg)}" update="@form"/>
+                            </p:column>
+                        </p:dataTable>
+                    </h:form>
+                </p:tab>
+
+            </p:tabView>
 
             <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
                 <p:commandButton value="Yes" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
@@ -137,7 +226,6 @@ and open the template in the editor.
                     </div>
                 </h:form>
             </p:dialog>
-
         </div>
     </h:body>
 </html>

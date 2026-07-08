@@ -65,7 +65,18 @@ public class UserDao {
             return null;
         }
     }
-    
-    
-    
+
+    public User findById(Long id) {
+        if (id == null) {
+            return null;
+        }
+        return em.find(User.class, id);
+    }
+
+    public long countByRole(String role) {
+        return em.createQuery("SELECT COUNT(u) FROM User u WHERE LOWER(u.roles) = :role", Long.class)
+                .setParameter("role", role.toLowerCase())
+                .getSingleResult();
+    }
+
 }
