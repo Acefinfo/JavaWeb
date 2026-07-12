@@ -90,9 +90,9 @@
 
                             <div class="actions">
                                 <p:commandButton value="Buy Now" icon="pi pi-shopping-bag" styleClass="ui-button-success"
-                                                 rendered="#{productBean.selectedProduct.stock gt 0}"
-                                                 actionListener="#{purchaseBean.buyNow(productBean.selectedProduct.id, productBean.buyQuantity)}"
-                                                 update="@form"/>
+                                                rendered="#{productBean.selectedProduct.stock gt 0}"
+                                                actionListener="#{paymentBean.payProductWithEsewa(productBean.selectedProduct.id, productBean.buyQuantity)}"
+                                                update="@form"/>
 
                                 <p:commandButton value="Add to Cart" icon="pi pi-shopping-cart"
                                                   rendered="#{productBean.selectedProduct.stock gt 0}"

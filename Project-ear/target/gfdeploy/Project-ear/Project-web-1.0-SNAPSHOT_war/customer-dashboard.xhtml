@@ -82,9 +82,9 @@
                                 </h:outputText>
                             </div>
                             <div style="text-align:right; margin-top:10px;">
-                                <p:commandButton value="Buy All (skip checkout)" icon="pi pi-shopping-bag"
-                                                  actionListener="#{purchaseBean.checkoutCart}"
-                                                  update="@form :dashboardTabs:invoiceForm"/>
+                                <p:commandButton value="Checkout with eSewa" icon="pi pi-shopping-bag"
+                                                 actionListener="#{paymentBean.payCartWithEsewa}"
+                                                 update="@form :dashboardTabs:invoiceForm"/>
                             </div>
                         </h:panelGroup>
                     </h:form>

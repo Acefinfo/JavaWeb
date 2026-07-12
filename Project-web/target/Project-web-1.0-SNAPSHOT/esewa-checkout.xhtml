@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+    xmlns:f="http://xmlns.jcp.org/jsf/core">
+    
+    <f:metadata>
+        <f:viewParam name="tid" value="#{esewaCheckoutBean.tid}"/>
+        <f:event type="preRenderView" listener="#{esewaCheckoutBean.loadPayment()}"/>
+    </f:metadata>
+    
+    <h:head>
+        <title>Redirecting to eSewa... </title>
+    </h:head>
+    
+    <h:body onload="document.getElementById('esewaForm').submit();">
+        <p style="font-family:Arial,Helvetica,sans-serif; text-align:center; margin-top:60px;">
+            Redirecting to eSewa, please wait 
+        </p>
+        
+        <form id ="esewaForm" method="POST" action="#{esewaCheckoutBean.formUrl}">
+            <input type="hidden" name="amount" value="#{esewaCheckoutBean.formattedAmount}"/>
+             <input type="hidden" name="tax_amount" value="0"/>
+            <input type="hidden" name="total_amount" value="#{esewaCheckoutBean.formattedAmount}"/>
+            <input type="hidden" name="transaction_uuid" value="#{esewaCheckoutBean.transactionUuid}"/>
+            <input type="hidden" name="product_code" value="#{esewaCheckoutBean.productCode}"/>
+            <input type="hidden" name="product_service_charge" value="0"/>
+            <input type="hidden" name="product_delivery_charge" value="0"/>
+            <input type="hidden" name="success_url" value="#{esewaCheckoutBean.successUrl}"/>
+            <input type="hidden" name="failure_url" value="#{esewaCheckoutBean.failureUrl}"/>
+            <input type="hidden" name="signed_field_names" value="total_amount,transaction_uuid,product_code"/>
+            <input type="hidden" name="signature" value="#{esewaCheckoutBean.signature}"/>
+        
+        </form>
+              
+        
+        
+        
+    </h:body>
+    
+    
+    
+    
+    
+</html>
