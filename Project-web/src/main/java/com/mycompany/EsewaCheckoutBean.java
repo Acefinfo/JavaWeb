@@ -45,6 +45,7 @@ public class EsewaCheckoutBean {
         if (!valid) {
             try {
                 FacesContext.getCurrentInstance().getExternalContext().redirect("home.xhtml");
+                FacesContext.getCurrentInstance().responseComplete();
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }

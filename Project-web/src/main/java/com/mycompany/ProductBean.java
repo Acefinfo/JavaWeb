@@ -43,7 +43,8 @@ public class ProductBean implements Serializable {
     private Long viewProductId;
     private Product selectedProduct;
     private int buyQuantity = 1;
-
+    private List<Product> recommendedProducts;
+    
     public List<Product> getAllProducts() {
         if (allProducts == null) {
             allProducts = productDao.findAll();
@@ -149,6 +150,22 @@ public class ProductBean implements Serializable {
         } catch (Exception e) {
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Could not delete product."));
         }
+    }
+    
+    public List<Product> getRecommendedProducts() {
+        if (recommendedProducts == null) {
+            List<Product> all = productDao.findAll();
+            recommendedProducts = new java.util.ArrayList<>();
+            for (Product p : all) {
+                if (selectedProduct == null || !p.getId().equals(selectedProduct.getId())) {
+                    recommendedProducts.add(p);
+                }
+                if (recommendedProducts.size() >= 8) {
+                    break;
+                }
+            }
+        }
+        return recommendedProducts;
     }
 
     public Product getProduct() { 

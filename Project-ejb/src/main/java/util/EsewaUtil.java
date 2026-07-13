@@ -60,6 +60,17 @@ public class EsewaUtil {
         }
     }
 
+    
+    public static boolean amountsMatch(String expected, String actual) {
+        try {
+            double a = Double.parseDouble(expected.trim());
+            double b = Double.parseDouble(actual.trim());
+            return Math.abs(a - b) < 0.01;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
     public static String jsonValueAsString(JsonObject json, String key) {
         JsonValue value = json.get(key);
         if (value == null) return "";
@@ -69,7 +80,6 @@ public class EsewaUtil {
         return value.toString();
     }
 
-    /** Rebuilds "field=value,field=value,..." from eSewa's own signed_field_names, in eSewa's order. */
     public static String buildMessageFromSignedFields(JsonObject json, String signedFieldNamesCsv) {
         String[] fields = signedFieldNamesCsv.split(",");
         StringBuilder sb = new StringBuilder();
@@ -81,7 +91,7 @@ public class EsewaUtil {
         return sb.toString();
     }
 
-    /** Server-to-server confirmation — never trust the browser redirect alone. */
+    
     public static boolean verifyTransactionStatus(String transactionUuid, String totalAmount) {
         try {
             String url = STATUS_URL + "?product_code=" + URLEncoder.encode(MERCHANT_CODE, "UTF-8")
@@ -93,12 +103,22 @@ public class EsewaUtil {
             conn.setConnectTimeout(5000);
             conn.setReadTimeout(5000);
 
+            int responseCode = conn.getResponseCode();
+            java.io.InputStream stream = (responseCode >= 200 && responseCode < 300)
+                    ? conn.getInputStream() : conn.getErrorStream();
+
             StringBuilder body = new StringBuilder();
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8))) {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
                 String line;
                 while ((line = reader.readLine()) != null) {
                     body.append(line);
                 }
+            }
+
+            System.out.println("eSewa status check: HTTP " + responseCode + " body=" + body);
+
+            if (responseCode < 200 || responseCode >= 300) {
+                return false;
             }
 
             try (JsonReader reader = Json.createReader(new StringReader(body.toString()))) {
@@ -108,6 +128,7 @@ public class EsewaUtil {
                 return "COMPLETE".equals(status) && transactionUuid.equals(returnedUuid);
             }
         } catch (Exception e) {
+            System.out.println("eSewa status check FAILED (network/parse error): " + e);
             e.printStackTrace();
             return false;
         }

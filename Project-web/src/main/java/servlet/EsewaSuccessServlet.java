@@ -52,11 +52,33 @@ public class EsewaSuccessServlet extends HttpServlet {
 
                 PendingPayment pendingPayment = pendingPaymentDao.findByUuid(transactionUuid);
 
-                boolean signatureValid = expectedSignature.equals(signature);
+               boolean signatureValid = expectedSignature.equals(signature);
                 boolean statusComplete = "COMPLETE".equals(status);
                 boolean amountMatches = pendingPayment != null
-                        && EsewaUtil.formatAmount(pendingPayment.getAmount()).equals(totalAmount);
+                        && EsewaUtil.amountsMatch(EsewaUtil.formatAmount(pendingPayment.getAmount()), totalAmount);
                 boolean verifiedWithEsewaApi = EsewaUtil.verifyTransactionStatus(transactionUuid, totalAmount);
+
+                System.out.println("=== ESEWA CALLBACK DEBUG ===");
+                System.out.println("raw json: " + json);
+                System.out.println("status=" + status + " uuid=" + transactionUuid + " totalAmount=" + totalAmount);
+                System.out.println("expectedSignature=" + expectedSignature + " gotSignature=" + signature);
+                System.out.println("pendingPayment amount=" + (pendingPayment != null ? pendingPayment.getAmount() : "null"));
+                System.out.println("signatureValid=" + signatureValid + " statusComplete=" + statusComplete
+                        + " amountMatches=" + amountMatches + " verifiedWithEsewaApi=" + verifiedWithEsewaApi);
+
+                if (!signatureValid) {
+                    System.out.println("FAIL REASON: signature mismatch - check SECRET_KEY / signed_field_names order.");
+                } else if (!statusComplete) {
+                    System.out.println("FAIL REASON: eSewa reported status=" + status + " (not COMPLETE).");
+                } else if (!amountMatches) {
+                    System.out.println("FAIL REASON: amount mismatch - pendingPayment not found, or amount differs. "
+                            + "pendingPayment=" + (pendingPayment != null ? EsewaUtil.formatAmount(pendingPayment.getAmount()) : "null")
+                            + " vs esewa totalAmount=" + totalAmount);
+                } else if (!verifiedWithEsewaApi) {
+                    System.out.println("FAIL REASON: server-to-server status check with eSewa failed - "
+                            + "check outbound internet/HTTPS access from this server to " + EsewaUtil.STATUS_URL
+                            + " (see the 'eSewa status check' log line above for the real cause).");
+                }
 
                 if (signatureValid && statusComplete && amountMatches && verifiedWithEsewaApi) {
                     String result = paymentService.finalizePayment(transactionUuid, true);
@@ -67,6 +89,7 @@ public class EsewaSuccessServlet extends HttpServlet {
             }
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("ESEWA CALLBACK EXCEPTION: " + e);
         }
 
         response.sendRedirect(request.getContextPath() + "/" + redirectPage);
