@@ -8,6 +8,7 @@ package com.mycompany;
 import dao.ProductDao;
 import entity.Product;
 import entity.User;
+import java.io.OutputStream;
 import java.io.Serializable;
 import java.util.List;
 import javax.ejb.EJB;
@@ -15,6 +16,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletResponse;
 import org.primefaces.model.file.UploadedFile;
 
 /**
@@ -168,6 +170,65 @@ public class ProductBean implements Serializable {
         return recommendedProducts;
     }
 
+    public void downloadProductImage(Product p){
+        FacesContext fc = FacesContext.getCurrentInstance();
+        HttpServletResponse response = (HttpServletResponse) fc.getExternalContext().getResponse();
+        
+        try{
+            byte[] image = p.getImage();
+            if (image == null || image.length == 0){
+                fc.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "No image", "This product has no image"));
+                return;
+            }
+            
+            String ext = "jpg";
+            String contentType = "image/jpeg";
+            if (image.length> 4 && (image[0] & 0xFF) == 0x89 && image[1] == 0x50 && image[2] == 0x4E && image[3] == 0x47 ){
+                ext ="png";
+                contentType = "image/png";
+            }
+            
+            response.reset();
+            response.setContentType(contentType);
+            response.setHeader("Content-Disposition", "attachment; filename=\"" + sanitizeFileName(p.getName()) + "." + ext + "\"");
+            response.setContentLength(image.length);
+            
+            OutputStream out = response.getOutputStream();
+            out.write(image);
+            out.flush();
+            
+        } catch (Exception e){
+            
+        }
+        fc.responseComplete();
+    }
+    
+    public void downloadProductsExcel(){
+        List<Product> products = getProductList();
+        List<String[]> rows = new java.util.ArrayList<String[]>();
+        
+        int sn = 1;
+        if (products != null){
+            for (Product p : products){
+                rows.add(new String[]{
+                    String.valueOf(sn++),
+                    p.getName(),
+                    p.getDescription(),
+                    String.valueOf(p.getPrice()),
+                    String.valueOf(p.getStock())
+                });
+            }
+        }
+        util.ExcelExportUtil.export("My Products", new String[]{"SN", "Name", "Description", "Price", "Stock"},rows, "my-products.xlsx");
+    }
+    
+    private String sanitizeFileName(String name){
+        if (name == null || name.trim().isEmpty()){
+            return "reoduct";
+        }
+        return name.replaceAll("[^a-zA-Z0-9-_]", "_");
+    }
+    
     public Product getProduct() { 
         return product; 
     }

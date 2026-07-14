@@ -69,6 +69,67 @@ public class InvoiceBean implements Serializable {
         }
         return allInvoices;
     }
+    
+    public void downloadCustomerInvoicesExcel() {
+        List<Invoice> invoices = getCustomerInvoices();
+        List<String[]> rows = new java.util.ArrayList<String[]>();
+        SimpleDateFormat fmt = new SimpleDateFormat("dd MMM yyyy HH:mm");
+        if (invoices != null) {
+            for (Invoice i : invoices) {
+                rows.add(new String[]{
+                    fmt.format(i.getOrderDate()),
+                    i.getProductName(),
+                    i.getSellerUsername(),
+                    String.valueOf(i.getUnitPrice()),
+                    String.valueOf(i.getQuantity()),
+                    String.valueOf(i.getTotalPrice())
+                });
+            }
+        }
+        util.ExcelExportUtil.export("My Invoices",new String[]{"Date", "Product", "Seller", "Unit Price", "Qty", "Total"},rows, "my-invoices.xlsx");
+    }
+
+    public void downloadInvoicePdf(Invoice inv){
+        util.InvoicePdfUtil.download(inv);
+    }
+    
+    public void downloadSellerInvoicesExcel(){
+        List<Invoice> invoices = getSellerInvoices();
+        List<String[]> rows = new java.util.ArrayList<String[]>();
+        SimpleDateFormat date = new SimpleDateFormat("dd MMM yyyy HH:mm");
+        
+        if (invoices != null){
+            for (Invoice i : invoices){
+                rows.add(new String[]{
+                date.format(i.getOrderDate()),
+                i.getProductName(),
+               String.valueOf(i.getUnitPrice()),
+               String.valueOf(i.getQuantity()),
+               String.valueOf(i.getTotalPrice())
+            });
+            }
+        }
+        util.ExcelExportUtil.export("My Sales", new String[]{"Date", "Product", "Unit Price", "Qty Sold", "Total"},rows, "my-sales.xlsx");
+    }
+
+    public void downloadAllInvoicesExcel() {
+    List<Invoice> invoices = getAllInvoices();
+    List<String[]> rows = new java.util.ArrayList<String[]>();
+    SimpleDateFormat fmt = new SimpleDateFormat("dd MMM yyyy HH:mm");
+    if (invoices != null) {
+        for (Invoice i : invoices) {
+            rows.add(new String[]{
+                fmt.format(i.getOrderDate()),
+                i.getBuyer() != null ? i.getBuyer().getUsername() : "",
+                i.getProductName(),
+                i.getSellerUsername(),
+                String.valueOf(i.getQuantity()),
+                String.valueOf(i.getTotalPrice())
+            });
+        }
+    }
+    util.ExcelExportUtil.export("All Invoices", new String[]{"Date", "Buyer", "Product", "Seller", "Qty", "Total"},rows, "all-invoices.xlsx");
+}
 
     public int getSellerInvoiceCount() {
         return getSellerInvoices() == null ? 0 : getSellerInvoices().size();

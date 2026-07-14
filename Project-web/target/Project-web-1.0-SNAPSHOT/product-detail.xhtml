@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      template="/template.xhtml">
+
+    <f:metadata>
+        <f:viewParam name="id" value="#{productBean.viewProductId}"/>
+        <f:event type="preRenderView" listener="#{productBean.loadSelectedProduct}"/>
+    </f:metadata>
+
+    <ui:define name="title">#{productBean.selectedProduct.name}</ui:define>
+
+    <ui:define name="head-extra">
+        <style>
+            .content { max-width: 900px; margin: 30px auto; padding: 20px; background:#fff;
+                       border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+            .detail-grid { display: flex; gap: 30px; flex-wrap: wrap; }
+
+            .detail-image { flex: 1 1 320px; }
+            .detail-image img,
+            .detail-image .no-image-box {
+                width: 100%;
+                max-width: 360px;
+                height: 360px;
+                border-radius: 8px;
+                object-fit: cover;
+            }
+            .no-image-box {
+                background:#eee; color:#999;
+                display:flex; align-items:center; justify-content:center;
+            }
+
+            .detail-info { flex: 1 1 320px; }
+            .detail-info h2 { margin-top: 0; }
+            .price-tag { font-size: 26px; color: #2563eb; font-weight: 700; margin: 10px 0; }
+            .stock-line { color: #555; margin-bottom: 15px; }
+            .actions { display:flex; gap: 10px; flex-wrap: wrap; margin-top: 15px; }
+            .ui-button-success { background:#16a34a !important; border:none !important; }
+            .ui-button-secondary { background:#64748b !important; border:none !important; color:#fff !important;}
+
+            /* "You may like as well" section, reusing the same card look as the home page grid */
+            .recommend-section { max-width: 1160px; margin: 30px auto; padding: 0 20px 40px; }
+            .recommend-section h3 { color:#444; margin-bottom: 15px; }
+            .recommend-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 18px; }
+            .recommend-card {
+                background: #fff; border-radius: 10px; padding: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+                text-align: center; transition: transform .15s ease;
+            }
+            .recommend-card:hover { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
+
+            .recommend-card img,
+            .recommend-card .no-image-box {
+                width: 100%;
+                height: 150px;
+                border-radius: 6px;
+                object-fit: cover;
+            }
+            .recommend-card .no-image-box { background:#eee; color:#999; display:flex; align-items:center; justify-content:center; font-size:12px; }
+            .recommend-name { font-weight: 600; margin: 8px 0 4px; color:#222; font-size: 14px; }
+            .recommend-price { color: #2563eb; font-weight: 700; font-size: 14px; }
+        </style>
+    </ui:define>
+
+    <ui:define name="content">
+        <div class="content">
+
+            <h:panelGroup rendered="#{empty productBean.selectedProduct}">
+                <p>This product could not be found. It may have been removed.</p>
+            </h:panelGroup>
+
+            <h:panelGroup rendered="#{not empty productBean.selectedProduct}">
+                <div class="detail-grid">
+
+                    <div class="detail-image">
+                        <h:panelGroup rendered="#{not empty productBean.selectedProduct.imageBase64}">
+                            <img src="data:image/jpeg;base64,#{productBean.selectedProduct.imageBase64}" alt="#{productBean.selectedProduct.name}"/>
+                        </h:panelGroup>
+                        <h:panelGroup layout="block" class="no-image-box" rendered="#{empty productBean.selectedProduct.imageBase64}">
+                            No image available
+                        </h:panelGroup>
+                    </div>
+
+                    <div class="detail-info">
+
+                        <h2>#{productBean.selectedProduct.name}</h2>
+                        <div class="price-tag">
+                            <h:outputText value="#{productBean.selectedProduct.price}">
+                                <f:convertNumber type="currency" currencySymbol="Rs "/>
+                            </h:outputText>
+                        </div>
+
+                        <p>#{productBean.selectedProduct.description}</p>
+
+                        <div class="stock-line">
+                            <h:outputText value="In stock: #{productBean.selectedProduct.stock}" rendered="#{productBean.selectedProduct.stock gt 0}"/>
+                            <h:outputText value="Out of stock" style="color:#dc2626; font-weight:600;" rendered="#{productBean.selectedProduct.stock le 0}"/>
+                        </div>
+
+                        <h:form id="actionForm">
+                            <p:growl id="messages" showDetail="true"/>
+
+                            <h:panelGrid columns="2" rendered="#{productBean.selectedProduct.stock gt 0}" style="margin-bottom:10px;">
+                                <p:outputLabel value="Quantity:" for="qty"/>
+                                <p:inputNumber id="qty" value="#{productBean.buyQuantity}" decimalPlaces="0" minValue="1" maxValue="#{productBean.selectedProduct.stock}"/>
+                            </h:panelGrid>
+
+                            <div class="actions">
+                                <p:commandButton value="Buy Now" icon="pi pi-shopping-bag" styleClass="ui-button-success"
+                                                rendered="#{productBean.selectedProduct.stock gt 0}"
+                                                actionListener="#{paymentBean.payProductWithEsewa(productBean.selectedProduct.id, productBean.buyQuantity)}"
+                                                update="@form"/>
+
+                                <p:commandButton value="Add to Cart" icon="pi pi-shopping-cart"
+                                                  rendered="#{productBean.selectedProduct.stock gt 0}"
+                                                  actionListener="#{cartBean.addToCart(productBean.selectedProduct.id)}"
+                                                  update="@form"/>
+
+                                <p:commandButton value="Add to Wishlist" icon="pi pi-heart" styleClass="ui-button-secondary"
+                                                  actionListener="#{wishlistBean.addToWishlist(productBean.selectedProduct.id)}"
+                                                  update="@form"/>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </h:panelGroup>
+        </div>
+
+        <h:panelGroup rendered="#{not empty productBean.recommendedProducts}">
+            <div class="recommend-section">
+                <h3>You may like as well</h3>
+                <div class="recommend-grid">
+                    <ui:repeat value="#{productBean.recommendedProducts}" var="rp">
+                        <h:panelGroup layout="block" class="recommend-card">
+                            <h:link outcome="product-detail" style="text-decoration:none; color:inherit;">
+                                <f:param name="id" value="#{rp.id}"/>
+                                <h:panelGroup rendered="#{not empty rp.imageBase64}">
+                                    <img src="data:image/jpeg;base64,#{rp.imageBase64}" alt="#{rp.name}"/>
+                                </h:panelGroup>
+                                <h:panelGroup layout="block" class="no-image-box" rendered="#{empty rp.imageBase64}">
+                                    No image
+                                </h:panelGroup>
+                                <div class="recommend-name">#{rp.name}</div>
+                                <div class="recommend-price">
+                                    <h:outputText value="#{rp.price}">
+                                        <f:convertNumber type="currency" currencySymbol="Rs "/>
+                                    </h:outputText>
+                                </div>
+                            </h:link>
+                        </h:panelGroup>
+                    </ui:repeat>
+                </div>
+            </div>
+        </h:panelGroup>
+    </ui:define>
+
+</ui:composition>

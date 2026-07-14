@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <h:head>
+        <title><ui:insert name="title">ShopShip</ui:insert></title>
+
+        <!-- Styles shared by every page (header + footer) -->
+        <style>
+            body { font-family: Arial, Helvetica, sans-serif; margin: 0; background: #f4f6f8; }
+
+            .top-bar {
+                display: flex; justify-content: space-between; align-items: center;
+                padding: 15px 30px; background: #2c3e50; color: #fff;
+            }
+            .top-bar h2 { margin: 0; font-size: 22px; }
+            .top-bar a { color: #fff; text-decoration: none; }
+            .brand-link { display:flex; align-items:center; gap:8px; }
+            .nav-links { display:flex; gap:18px; align-items:center; margin-left: 30px; }
+            .nav-links a { opacity:0.9; font-size:14px; }
+            .nav-links a:hover { opacity:1; text-decoration:underline; }
+            .header-extra { flex: 1; display:flex; justify-content:center; }
+            .nav-actions { display:flex; gap:10px; align-items:center; }
+            .login-btn .ui-button { background: #2563eb !important; border-radius: 20px !important; border:none !important; }
+            .logout-btn .ui-button { border-radius: 20px !important; }
+            .welcome-chip { color:#fff; font-size:14px; opacity:0.9; margin-right:4px; }
+
+            .site-footer {
+                margin-top: 40px; padding: 24px 30px; background: #1f2937; color: #cbd5e1;
+                text-align: center; font-size: 13px;
+            }
+            .site-footer a { color: #93c5fd; text-decoration: none; margin: 0 8px; }
+            .site-footer a:hover { text-decoration: underline; }
+        </style>
+
+        <!-- Page-specific extra styles go here -->
+        <ui:insert name="head-extra"/>
+    </h:head>
+
+    <h:body>
+        <!-- ===== Shared header ===== -->
+        <div class="top-bar">
+            <div class="brand-link">
+                <h:link outcome="home" class="brand-link">
+                    <h2>Shop Shop</h2>
+                </h:link>
+                <div class="nav-links">
+                    <h:link outcome="home" value="Home"/>
+                    <h:link outcome="ContactPage" value="Contact"/>
+                </div>
+            </div>
+
+            <!-- Slot for page-specific header content, e.g. the search box on home.xhtml -->
+            <div class="header-extra">
+                <ui:insert name="header-extra"/>
+            </div>
+
+            <h:form id="loginLinkForm" class="login-btn" rendered="#{empty sessionScope.currentUser}">
+                <p:button value="Login" icon="pi pi-sign-in" outcome="login"/>
+            </h:form>
+
+            <h:form id="loggedInNavForm" class="nav-actions" rendered="#{not empty sessionScope.currentUser}">
+                <h:outputText value="Hi, #{sessionScope.currentUser.username}" styleClass="welcome-chip"/>
+                <p:button value="Home" icon="pi pi-home" outcome="home"/>
+                <p:button value="Dashboard" icon="pi pi-th-large"
+                          outcome="#{sessionScope.currentUser.role == 'Seller' ? 'seller-dashboard' : sessionScope.currentUser.role == 'Admin' ? 'admin-dashboard' : 'customer-dashboard'}"/>
+                <p:commandButton value="Logout" icon="pi pi-sign-out" ajax="false"
+                                  action="#{userBean.logout}" styleClass="ui-button-danger logout-btn"/>
+            </h:form>
+        </div>
+
+        <!-- ===== Page content ===== -->
+        <ui:insert name="content"/>
+
+        <!-- ===== Shared footer ===== -->
+        <div class="site-footer">
+            <ui:insert name="footer">
+                <div>
+                    <h:link outcome="home" value="Home"/>
+                    <h:link outcome="ContactPage" value="Contact"/>
+                </div>
+                <div style="margin-top:8px;">&#169; 2026 Shop Shop. All rights reserved.</div>
+            </ui:insert>
+        </div>
+    </h:body>
+</html>
