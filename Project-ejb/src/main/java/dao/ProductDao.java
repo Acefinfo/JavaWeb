@@ -7,6 +7,7 @@ package dao;
 
 import entity.Product;
 import entity.User;
+import java.io.Serializable;
 import java.util.List;
 import javax.ejb.Stateless;
 import javax.persistence.EntityManager;
@@ -18,8 +19,9 @@ import javax.persistence.PersistenceContext;
  */
 
 @Stateless
-public class ProductDao {
-    
+public class ProductDao implements Serializable {
+        private static final long serialVersionUID = 1L;
+
     @PersistenceContext(unitName = "un_projectTest")
     private EntityManager em;
     

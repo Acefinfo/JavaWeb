@@ -1,5 +1,6 @@
 package entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,7 +40,6 @@ public class Product implements Serializable {
     @Lob
     @Column(name = "image")
     private byte[] image;
-
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id", nullable = false)
@@ -85,6 +85,7 @@ public class Product implements Serializable {
         this.stock = stock;
     }
 
+    @JsonIgnore
     public byte[] getImage() {
         return image;
     }
@@ -100,12 +101,11 @@ public class Product implements Serializable {
     public void setSeller(User seller) {
         this.seller = seller;
     }
-    
+
     public String getImageBase64() {
-    if (image == null || image.length == 0) {
-        return "";
+        if (image == null || image.length == 0) {
+            return "";
+        }
+        return javax.xml.bind.DatatypeConverter.printBase64Binary(image);
     }
-    return javax.xml.bind.DatatypeConverter.printBase64Binary(image);
-}
-    
 }

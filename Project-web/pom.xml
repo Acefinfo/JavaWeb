@@ -2,10 +2,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-    <artifactId>Project</artifactId>
-    <groupId>com.mycompany</groupId>
-    <version>1.0-SNAPSHOT</version>
-  </parent>
+        <artifactId>Project</artifactId>
+        <groupId>com.mycompany</groupId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
 
     <groupId>com.mycompany</groupId>
     <artifactId>Project-web</artifactId>
@@ -17,54 +17,80 @@
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <version.jersey>2.15</version.jersey>
     </properties>
-    
+
     <dependencies>
-        
+
         <dependency>
             <groupId>javax</groupId>
             <artifactId>javaee-web-api</artifactId>
             <version>7.0</version>
             <scope>provided</scope>
         </dependency>
-        
+
         <dependency>
-        <groupId>org.primefaces</groupId>
-        <artifactId>primefaces</artifactId>
-        <version>10.0.0</version>            
-    </dependency>
-    
-    <dependency>
-        <groupId>org.apache.poi</groupId>
-        <artifactId>poi</artifactId>
-        <version>3.17</version>
-    </dependency>
+            <groupId>org.primefaces</groupId>
+            <artifactId>primefaces</artifactId>
+            <version>10.0.0</version>
+        </dependency>
 
-    <dependency>
-        <groupId>org.apache.poi</groupId>
-        <artifactId>poi-ooxml</artifactId>
-        <version>3.17</version>
-    </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>3.17</version>
+        </dependency>
 
-    <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-collections4</artifactId>
-        <version>4.1</version>
-    </dependency>
-    
-    <dependency>
-        <groupId>com.github.librepdf</groupId>
-        <artifactId>openpdf</artifactId>
-        <version>1.3.30</version>
-    </dependency>
-    
-    <dependency>
-    <groupId>com.mycompany</groupId>
-    <artifactId>Project-ejb</artifactId>
-    <version>1.0-SNAPSHOT</version>
-    <scope>provided</scope>
-</dependency>
-     <dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>3.17</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.librepdf</groupId>
+            <artifactId>openpdf</artifactId>
+            <version>1.3.30</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.mycompany</groupId>
+            <artifactId>Project-ejb</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!--        API-->
+
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet</artifactId>
+            <version>${version.jersey}</version>
+        </dependency>
+
+        <!-- Jackson <-> Jersey glue -->
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-json-jackson</artifactId>
+            <version>${version.jersey}</version>
+        </dependency>
+
+        <!-- optional: only if you need multipart file uploads -->
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-multipart</artifactId>
+            <version>${version.jersey}</version>
+        </dependency>
+        
+        
+        <!-- Jackson core -->
+        <dependency>
             <groupId>com.fasterxml.jackson.jaxrs</groupId>
             <artifactId>jackson-jaxrs-json-provider</artifactId>
             <version>2.8.8</version>
@@ -84,15 +110,42 @@
             <artifactId>jackson-databind</artifactId>
             <version>2.8.8</version>
         </dependency>
-
-    
+        <dependency>
+    <groupId>com.fasterxml.jackson.datatype</groupId>
+    <artifactId>jackson-datatype-hibernate5</artifactId>
+    <version>2.8.8</version>
+</dependency>
+        <!--JWT-->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>0.9.1</version>
+            <scope>compile</scope>
+        </dependency>
+ 
+        <!--        <dependency>
+            <groupId>org.primefaces</groupId>
+            <artifactId>primefaces</artifactId>
+            <version>6.2</version>
+        </dependency>-->
+        <!--        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-web-api</artifactId>
+            <version>7.0</version>
+            <scope>provided</scope>
+        </dependency>-->
+       
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+            <version>2.0.1.Final</version>
+        </dependency>
+<!--        Api-->
         
-    </dependencies>
-    
-    
-    
+ 
 
-    
+
+    </dependencies>
 
     <build>
         <plugins>

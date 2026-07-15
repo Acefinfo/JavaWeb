@@ -5,13 +5,13 @@
  */
 package com.mycompany;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 import javax.ws.rs.core.Application;
+import org.glassfish.jersey.CommonProperties;
+import org.glassfish.jersey.jackson.JacksonFeature;
 
-/**
- *
- * @author DELL
- */
 @javax.ws.rs.ApplicationPath("webresources")
 public class ApplicationConfig extends Application {
 
@@ -22,14 +22,51 @@ public class ApplicationConfig extends Application {
         return resources;
     }
 
-    /**
-     * Do not modify addRestResourceClasses() method.
-     * It is automatically populated with
-     * all resources defined in the project.
-     * If required, comment out calling this method in getClasses().
-     */
-    private void addRestResourceClasses(Set<Class<?>> resources) {
-        resources.add(com.mycompany.GenericResource.class);
+    @Override
+    public Map<String, Object> getProperties() {
+        Map<String, Object> props = new HashMap<>();
+        props.put(CommonProperties.MOXY_JSON_FEATURE_DISABLE, true);
+        return props;
     }
-    
+
+    private void addRestResourceClasses(Set<Class<?>> resources) {
+
+        resources.add(com.mycompany.GenericResource.class);
+        resources.add(com.mycompany.ProductResource.class);
+        resources.add(util.JacksonConfig.class);
+    }
 }
+/**
+ package beans;
+
+  import java.util.HashMap;
+  import java.util.Map;
+  import java.util.Set;
+  import javax.ws.rs.core.Application;
+  import org.glassfish.jersey.jackson.JacksonFeature;
+  import org.glassfish.jersey.CommonProperties;
+
+  @javax.ws.rs.ApplicationPath("webresources")
+  public class ApplicationConfig extends Application {
+
+      @Override
+      public Set<Class<?>> getClasses() {
+          Set<Class<?>> resources = new java.util.HashSet<>();
+          addRestResourceClasses(resources);
+          return resources;
+      }
+
+      private void addRestResourceClasses(Set<Class<?>> resources) {
+          resources.add(beans.GenericResource.class);
+          resources.add(util.JacksonConfig.class);
+          resources.add(JacksonFeature.class);
+      }
+
+      @Override
+      public Map<String, Object> getProperties() {
+          Map<String, Object> props = new HashMap<>();
+          props.put(CommonProperties.MOXY_JSON_FEATURE_DISABLE, true);
+          return props;
+      }
+  }
+ */

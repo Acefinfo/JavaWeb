@@ -22,10 +22,30 @@ and open the template in the editor.
             <file-size-threshold>0</file-size-threshold>
         </multipart-config>
     </servlet>
+    
+    <!--    Api-->
+    <servlet>
+        <servlet-name>ServletAdaptor</servlet-name>
+        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+        <init-param>
+            <param-name>jersey.config.server.provider.packages</param-name>
+            <param-value>com.mycompany</param-value>
+        </init-param>
+        <init-param>
+            <param-name>jersey.config.server.provider.classnames</param-name>
+            <param-value>org.glassfish.jersey.jackson.JacksonFeature,util.JacksonConfig</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
     <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>*.xhtml</url-pattern>
     </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ServletAdaptor</servlet-name>
+        <url-pattern>/webresources/*</url-pattern>
+    </servlet-mapping>
+    <!--Apii-->
 
     <context-param>
         <param-name>primefaces.UPLOADER</param-name>

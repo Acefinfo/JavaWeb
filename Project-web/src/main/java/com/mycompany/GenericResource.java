@@ -5,6 +5,10 @@
  */
 package com.mycompany;
 
+import dao.ProductDao;
+import entity.Product;
+import java.util.List;
+import javax.ejb.EJB;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.Consumes;
@@ -43,6 +47,18 @@ public class GenericResource {
          return "{\"message\":\"Hello World\"}";
         //TODO return proper representation object
 //        throw new UnsupportedOperationException();
+    }
+    
+    @EJB
+    private ProductDao productDao;
+    @GET
+    @Path("h")
+      @Produces(MediaType.APPLICATION_JSON)
+    public List<Product> hello() {
+        return productDao.findAll();
+        
+        
+
     }
 
     /**

@@ -1,5 +1,6 @@
 E:\DemoApplication\Project\Project-web\src\main\java\com\mycompany\PurchaseBean.java
 E:\DemoApplication\Project\Project-web\src\main\java\com\mycompany\GenericResource.java
+E:\DemoApplication\Project\Project-web\src\main\java\util\JacksonConfig.java
 E:\DemoApplication\Project\Project-web\src\main\java\com\mycompany\CartBean.java
 E:\DemoApplication\Project\Project-web\src\main\java\com\mycompany\ContactBean.java
 E:\DemoApplication\Project\Project-web\src\main\java\servlet\EsewaSuccessServlet.java
@@ -14,6 +15,7 @@ E:\DemoApplication\Project\Project-web\src\main\java\servlet\EsewaFailureServlet
 E:\DemoApplication\Project\Project-web\src\main\java\com\mycompany\Contact.java
 E:\DemoApplication\Project\Project-web\src\main\java\com\mycompany\ProductBean.java
 E:\DemoApplication\Project\Project-web\src\main\java\util\ExcelExportUtil.java
+E:\DemoApplication\Project\Project-web\src\main\java\com\mycompany\ProductResource.java
 E:\DemoApplication\Project\Project-web\src\main\java\util\InvoicePdfUtil.java
 E:\DemoApplication\Project\Project-web\src\main\java\com\mycompany\InboxBean.java
 E:\DemoApplication\Project\Project-web\src\main\java\com\mycompany\PaymentBean.java
