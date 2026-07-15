@@ -85,7 +85,6 @@ public class Product implements Serializable {
         this.stock = stock;
     }
 
-    @JsonIgnore
     public byte[] getImage() {
         return image;
     }

@@ -61,7 +61,6 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    @JsonIgnore
     public String getPassword() {
         return password;
     }
