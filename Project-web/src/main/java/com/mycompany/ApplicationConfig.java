@@ -31,8 +31,13 @@ public class ApplicationConfig extends Application {
 
     private void addRestResourceClasses(Set<Class<?>> resources) {
 
+        resources.add(com.mycompany.AdminResource.class);
+        resources.add(com.mycompany.CartResource.class);
         resources.add(com.mycompany.GenericResource.class);
+        resources.add(com.mycompany.InboxResource.class);
         resources.add(com.mycompany.ProductResource.class);
+        resources.add(com.mycompany.UsersResource.class);
+        resources.add(com.mycompany.WishlistResource.class);
         resources.add(util.JacksonConfig.class);
     }
 }
